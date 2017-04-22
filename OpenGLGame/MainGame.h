@@ -4,6 +4,8 @@
 #include <GL\glew.h>
 #include <iostream>
 #include "Sprite.h"
+#include "Errors.h"
+#include "GLSLProgram.h"
 
 enum class GameState {PLAY, EXIT};
 
@@ -18,6 +20,8 @@ public:
 
 private:
 
+	void InitShaders();
+
 	SDL_Window* _window;
 
 	int _screenWidth;
@@ -31,6 +35,8 @@ private:
 	void ProcessInput();
 	void GameLoop();
 	void DrawGame();
+
+	GLSLProgram _colorProgram;
 
 };
 

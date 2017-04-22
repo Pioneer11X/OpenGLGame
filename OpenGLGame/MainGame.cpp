@@ -3,14 +3,6 @@
 
 #include <string>
 
-void FatalError(std::string errorString) {
-	std::cout << errorString << std::endl;
-	std::cout << "Enter any key to quit...";
-	int tmp;
-	std::cin >> tmp;
-	exit(1);
-}
-
 MainGame::MainGame()
 {
 	_window = nullptr;
@@ -58,6 +50,18 @@ void MainGame::InitSystems()
 	// Set the Background Color.
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
+	int glVersionMajor;
+	int glVersionMinor;
+	glGetIntegerv(GL_MAJOR_VERSION, &glVersionMajor);
+	glGetIntegerv(GL_MINOR_VERSION, &glVersionMinor);
+	printf("\n=== OpenGL Implementation ===\n");
+	printf("Vendor: %s\n", glGetString(GL_VENDOR));
+	printf("GL Version: %s\n", glGetString(GL_VERSION));
+	printf("GL Version (Strict): %d.%d\n", glVersionMajor, glVersionMinor);
+	printf("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+	InitShaders();
+
 }
 
 void MainGame::ProcessInput()
@@ -92,7 +96,11 @@ void MainGame::DrawGame()
 	// Clear the Color Buffer and the Depth Buffer.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
+	_colorProgram.Use();
+
 	_sprite.Draw();
+
+	_colorProgram.Unuse();
 
 	SDL_GL_SwapWindow(_window);
 
@@ -106,6 +114,15 @@ void MainGame::Run()
 	_sprite.Init(-1.0f, -1.0f, 1.0f, 1.0f);
 
 	GameLoop();
+
+}
+
+void MainGame::InitShaders()
+{
+
+	_colorProgram.CompileShaders("Shaders/ColorShading.vert", "Shaders/colorShading.frag");
+	_colorProgram.AddAttribute("vertexPosition");
+	_colorProgram.LinkShaders();
 
 }
 
